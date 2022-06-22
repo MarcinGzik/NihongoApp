@@ -1,0 +1,17 @@
+WindowManager:
+    MainScreen:
+    SecondScreen:
+
+<MainScreen>:
+    name:"main"
+
+
+<SecondScreen>:
+    name:"second"
+    GridLayout:
+        cols:2
+        Button:
+            text:"You are on second screen \n Click me to go back"
+            on_release:app.root.current = "main"
+
+
