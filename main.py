@@ -8,12 +8,15 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.dropdown import DropDown
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.stacklayout import StackLayout
-import user_infterface as ui
 
+
+import user_infterface as ui
+Window.size = (1400, 1000)
 
 class MainScreen(Screen):
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
+
         #layout of main screen
         layout = BoxLayout(orientation='vertical', padding = 10, spacing = 6)
         #buttons of main screen
@@ -31,7 +34,7 @@ class MainScreen(Screen):
 
 
     def GotoWindow(self, value):
-        self.manager.current = "second"
+        self.manager.current = "games"
         print(value)
 
     def Settings(self, value):
@@ -41,11 +44,12 @@ class MainScreen(Screen):
         self.manager.current = "dictionarysettings"
 
 
-class SecondScreen(Screen):
+class Games(Screen):
     pass
 
 
 class DictionarySettings(Screen):
+
     def __init__(self, **kwargs):
         self.name = "dictionarysettings"
         super(DictionarySettings, self).__init__(**kwargs)
@@ -108,6 +112,7 @@ class DictionarySettings(Screen):
         self.manager.current = "main"
         print(value)
 
+
 class Neko(Screen):
     def __init__(self, **kwargs):
         self.name = "settings"
@@ -126,28 +131,8 @@ class Neko(Screen):
         self.manager.current = "main"
 
 
-'''
-class Settings(Screen):
-    def __init__(self, **kwargs):
-        self.name='settings'
-        super(Settings, self).__init__(**kwargs)
-        layout = GridLayout(cols= 1)
-        b1 = ui.menu_button("go back to menu")
-        b1.bind(on_release=self.gotomenu)
-        b2 = ui.menu_button("button in settings")
-
-        layout.add_widget(b1)
-        layout.add_widget(b2)
-        self.add_widget(layout)
-
-    def gotomenu(self, value):
-        self.manager.current = "main"
-        print(value)
-
-'''
 class WindowManager(ScreenManager):
-    def PrintGotoWindow(self):
-        print("go to window")
+    pass
 
 
 class StackLayoutExample(StackLayout):
@@ -157,15 +142,9 @@ class StackLayoutExample(StackLayout):
 class MultiScreenApp(App):
     sm = ScreenManager()
     sm.add_widget(Screen(name='main'))
-    sm.add_widget(Screen(name='second'))
+    sm.add_widget(Screen(name='games'))
     sm.add_widget(Screen(name='dictionary'))
     sm.add_widget(Screen(name='neko'))
     sm.current_screen = MainScreen
-
-
-
-
-
-
 
 MultiScreenApp().run()
