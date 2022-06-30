@@ -2,10 +2,15 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.label import Label
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.image import Image
+
+
 class game():
     times_played = 0
     current_score = 0
     best_score = 0
+    answer1 =""
+    answer2 =""
+    in_game = True
     def __init__(self, times_played, best_score):
         self.times_played = times_played
         self.best_score = best_score
@@ -28,15 +33,24 @@ class MemoryGameSettings(game):
 
 class MemoryToggle(ToggleButton):
     text_value = ""
-    def __init__(self, strvalue, **kwargs):
+    value_id = None
+    gamecore= None
+    def __init__(self, strvalue, value_id, gc, **kwargs):
         super(MemoryToggle, self).__init__(**kwargs)
         self.text_value = strvalue
-        self.background_down = 'appdata/themes/standard/buttonviolet.png'
-        self.background_normal = 'appdata/themes/standard/buttonalpha.png'
+        self.value_id = value_id
+        self.gamecore = gc
+
+        #self.background_down = 'appdata/themes/standard/buttonviolet.png'
+
+        #self.background_normal = 'appdata/themes/standard/buttonalpha.png'
+
+
+
+        self.background_down = 'appdata/themes/standard/buttonalpha.png'
+        self.background_normal = 'appdata/themes/standard/buttonviolet.png'
 
     def on_state(self, widget, value):
-        if value == 'normal':
-            print(self.text_value)
-            return self.text_value
-        else:
-            pass
+        pass
+        #if value == 'normal':
+         #   self.disabled = True

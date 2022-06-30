@@ -16,10 +16,22 @@ from kivy.graphics import *
 import user_infterface as ui
 import gamedata as gm
 
+import json
+import random
 
-gamecore = gm.MemoryGameSettings(4,4,0,0)
+plik = open("appdata/json/test.json")
+data = json.load(plik)
+dictionary = []
+for item in data["from xlsx array"]:
+    dictionary.append(item)
+random.shuffle(dictionary)
+
+
+memorygamecore = gm.MemoryGameSettings(4,4,0,0)
 
 Window.size = (1400, 1000)
+
+
 
 class MainScreen(Screen):
     def __init__(self, **kwargs):
@@ -34,7 +46,8 @@ class MainScreen(Screen):
         b2.bind(on_release=self.GotoDictionarySettings)
         b3 = ui.menu_button("Settings")
         b3.bind(on_release=self.Settings)
-
+        #btn = Button(text = "1000",  text_visible= 0)
+        #layout.add_widget(btn)
         layout.add_widget(b1)
         layout.add_widget(b2)
         layout.add_widget(b3)
@@ -130,9 +143,6 @@ class DictionarySettings(Screen):
         layout.add_widget(b2)
         b1.opacity= 0
         b1.disabled = True
-        for i in range(100):
-            btn = Button(text=str(i), size_hint_y=None, height=40)
-            layout.add_widget(btn)
 
         layout.bind(minimum_height=layout.setter('height'))
         root.add_widget(layout)
@@ -168,35 +178,106 @@ class NihAppSettings(Screen):
 class MemoryGame(Screen):
     answer_a = ""
     answer_b = ""
+    pressed_toggles_number = 0
+    pressed_toggles = []
+
     def __init__(self, **kwargs):
         self.name = "memorygame"
         super(MemoryGame, self).__init__(**kwargs)
-
+        self.pressed_toggles_number = 0
+        self.pressed_toggles = []
 
         root = BoxLayout(orientation = 'vertical', padding = 10, minimum_height = Window.height /15)
-        back = ToggleButton(text="Go back to menu", font_size=25, size_hint_max_y=80, outline_width=2)
+        back = Button(text="Go back to menu", font_size=25, size_hint_max_y=80, outline_width=2)
         back.bind(on_release=self.gotomenu)
         root.add_widget(back)
+        layout = self.draw_toggles()
+
+
+        root.add_widget(layout)
+
+
+        self.add_widget(root)
+
+    def callback(instance, widget):
+        #print(widget)
+        #print(widget.text_value)
+        #print('The button <%s> is being pressed' % instance)
+        if widget.disabled is not True:
+            if instance.pressed_toggles_number == 0:
+                print("pierwszy")
+                instance.pressed_toggles.append(widget)
+                instance.pressed_toggles_number+=1
+
+            elif instance.pressed_toggles_number == 1:
+                print("drugi")
+                instance.pressed_toggles.append(widget)
+                instance.pressed_toggles_number += 1
+                for item in instance.pressed_toggles:
+                    print(item.text_value)
+            elif instance.pressed_toggles_number == 2:
+                print("reset")
+                print("wartość widgeta")
+                print(widget.text_value)
+                if instance.pressed_toggles[0].value_id == instance.pressed_toggles[1].value_id:
+                    for item in instance.pressed_toggles:
+                        item.disable = True
+                    instance.pressed_toggles_number = 1
+                    instance.pressed_toggles = []
+                    instance.pressed_toggles.append(widget)
+
+                else:
+
+                    for item in instance.pressed_toggles:
+                        item.state = 'normal'
+                    instance.pressed_toggles_number = 1
+                    instance.pressed_toggles = []
+                    instance.pressed_toggles.append(widget)
+            else:
+                print("wtf")
+                instance.pressed_toggles.append(widget)
+                for item in instance.pressed_toggles:
+                    item.state = 'normal'
+                instance.pressed_toggles_number = 0
+                instance.pressed_toggles = []
+        else:
+            widget.unbind(on_press=instance.callback)
+
+
+
+
+
+
+
+    def draw_toggles(self):
         layout = GridLayout(cols = 3, minimum_height=40, padding = 10, size_hint=(1, 1), spacing = 6)
 
+        toggles_data =[]
+        for k in range (6):
+            togglek = gm.MemoryToggle(str(dictionary[k][0]),k, memorygamecore, size_hint_min_y=80)
+            togglek1 = gm.MemoryToggle(str(dictionary[k][1]),k, memorygamecore, size_hint_min_y=80)
+            toggles_data.append(togglek)
+            toggles_data.append(togglek1)
         for i in range(12):
             relative = RelativeLayout(size_hint_y=200, size_hint_x = 200)
             #toggle1 = ToggleButton(text="", font_size=25, size_hint_min_y=80, outline_width=2, opacity =1)
             #toggle1.background_down ='appdata/themes/standard/buttonviolet.png'
             #toggle1.background_normal='appdata/themes/standard/buttonalpha.png'
-            toggle1 = gm.MemoryToggle(str(i), size_hint_min_y=80)
-            label1 = Label(text =str(i))
+            toggle1 = toggles_data[i]
+            toggle1.bind(on_press=self.callback)
+            label1 = Label(text =str(toggle1.text_value))
             relative.add_widget(label1)
-            toggle1.state = 'down'
+            toggle1.state = 'normal'
             relative.add_widget(toggle1)
 
             layout.add_widget(relative)
+        return layout
 
-        root.add_widget(layout)
-        self.add_widget(root)
-        print(self.answer_a)
+
     def gotomenu(self, value):
         self.manager.current = "main"
+
+
 class WindowManager(ScreenManager):
     pass
 
